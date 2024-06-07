@@ -1,0 +1,23 @@
+generator client {
+  provider = "prisma-client-js"
+}
+
+datasource db {
+  provider = "postgresql"
+  url      = env("DATABASE_URL")
+}
+
+model Taxis {
+  id           Int            @id(map: "taxis_pkey")
+  plate        String?
+  Trajectories Trajectories[]
+}
+
+model Trajectories {
+  id        Int       @id(map: "trajectories_pkey") @default(autoincrement())
+  taxiId    Int       @map("taxi_id")
+  date      DateTime? @db.Timestamp(6)
+  latitude  Float?
+  longitude Float?
+  Taxis     Taxis     @relation(fields: [taxiId], references: [id], onDelete: NoAction, onUpdate: NoAction, map: "fk_taxis")
+}
