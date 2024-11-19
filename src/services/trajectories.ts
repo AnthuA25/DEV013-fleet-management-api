@@ -1,4 +1,5 @@
 import prisma from "../utils/db";
+import { LocationHistory,LastLocation, ITrajectory} from "../interface";
 
 export const allTrajectoriesServices = async (skip: number, take: number): Promise<ITrajectory[]> => {
         const trajectories = await prisma.trajectories.findMany({
@@ -17,7 +18,7 @@ export const countTrajectoriesService = async ():Promise<ITrajectory[]> =>{
     return countTrajectories;
 }
 
-export const locationService = async(id:number,date:Date): Promise<any[]> =>{
+export const locationService = async(id:number,date:Date): Promise<LocationHistory[]> =>{
     const endDate = new Date(date);
 
     endDate.setDate(endDate.getDate() + 1);
@@ -38,8 +39,8 @@ export const locationService = async(id:number,date:Date): Promise<any[]> =>{
     return locationHistory;
 };
 
-export const lastLocationService= async(skip:number, take:number): Promise<any> =>{
-    const lastLocation = await prisma.$queryRaw`
+export const lastLocationService= async(skip:number, take:number): Promise<LastLocation[]> =>{
+    const lastLocation = await prisma.$queryRaw<LastLocation[]>`
             SELECT tax.id, tra.date, tra.latitude, tra.longitude
             FROM "Taxis" tax
             INNER JOIN (
@@ -52,15 +53,8 @@ export const lastLocationService= async(skip:number, take:number): Promise<any> 
     return lastLocation;
 }
 
-export const trajectoryByIdService = async(id: number):Promise<any> =>{
+export const trajectoryByIdService = async(id: number):Promise<ITrajectory | null> =>{
     const trajectory = await prisma.trajectories.findUnique({ where: { id: id } });
     return  trajectory;
 }
 
-export interface ITrajectory {
-    id?: number
-    taxiId?: number
-    date?: Date | null
-    latitude?: number | null
-    longitude?: number | null
-}
