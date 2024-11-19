@@ -3,18 +3,18 @@ import prisma from "../utils/db";
 import { allTrajectoriesServices, countTrajectoriesService, lastLocationService, locationService, trajectoryByIdService } from "../services/trajectories";
 import { IPaginated } from "../services/taxis";
 const xl = require('excel4node');
-const nodemailer = require('nodemailer');
+import nodemailer from 'nodemailer';
 
 export const TrajectoriesController = {
     getAllTrajectories: async (req: Request, res: Response) => {
         try {
             const { skip, take }:IPaginated= req.query;
-            if (!skip || !take) {
-                return res.status(400).json({ message: "Los parámetros 'skip' y 'take' son obligatorios en la consulta." });
+            if (!skip || !take ||isNaN(skip) || isNaN(take) || Number(skip) < 0 || Number(take) < 0) {
+                return res.status(400).json({ message: "Los parámetros 'skip' y 'take' deben ser números enteros positivos." });
             }
             const trajectories = await allTrajectoriesServices(Number(skip),Number(take))
             return res.status(200).json(trajectories);
-        } catch (error: any) {
+        } catch (error) {
             return res.status(500).json({ message: 'Error en el servidor' })
         }
     },
@@ -23,8 +23,8 @@ export const TrajectoriesController = {
             const countTrajectories = await countTrajectoriesService();
 
             return res.status(200).json(countTrajectories);
-        } catch (error: any) {
-            return res.status(500).json({ message: error.message })
+        } catch (error) {
+            return res.status(500).json({ message: 'Error en el servidor' })
         }
 
     },
@@ -38,8 +38,8 @@ export const TrajectoriesController = {
             // console.log("🚀 ~ getLocationHistory: ~ endDate:", endDate)
             const locationHistory = await locationService(parseInt(id),new Date(date as string))
             return res.status(200).json(locationHistory);
-        } catch (error: any) {
-            return res.status(500).json({ message: error.message })
+        } catch (error) {
+            return res.status(500).json({ message: 'Error en el servidor' })
         }
     },
     getTrajectoriesById: async (req: Request, res: Response) => {
@@ -50,21 +50,21 @@ export const TrajectoriesController = {
                 return res.status(404).json({ message: 'El id de la trayectoria no se encontró' });
             }
             return res.status(200).json(trajectory);
-        } catch (error: any) {
-            return res.status(500).json({ message: error.message })
+        } catch (error) {
+            return res.status(500).json({ message: 'Error en el servidor' })
         }
     },
     getLastLocation: async (req: Request, res: Response) => {
         try {
             const { skip, take }:IPaginated = req.query;
-            if (!skip || !take) {
-                return res.status(400).json({ message: "Los parámetros 'skip' y 'take' son obligatorios en la consulta." });
+            if (!skip || !take ||isNaN(skip) || isNaN(take) || Number(skip) < 0 || Number(take) < 0) {
+                return res.status(400).json({ message: "Los parámetros 'skip' y 'take' deben ser números enteros positivos." });
             }
             const lastLocation = await lastLocationService(Number(skip), Number(take));
             return res.status(200).json(lastLocation);
 
-        } catch (error: any) {
-            return res.status(500).json({ message: error.message })
+        } catch (error) {
+            return res.status(500).json({ message: 'Error en el servidor' })
         }
     },
     // postTrajectories: async (req: Request, res: Response) => {
@@ -202,7 +202,7 @@ export const TrajectoriesController = {
             };
             await transporter.sendMail(emailOptions);
             res.status(200).json({ message: 'Correo electrónico enviado con éxito' });
-        } catch (error: any) {
+        } catch (error) {
             return res.status(500).json({ message: 'Error en el servidor' })
         }
     }
