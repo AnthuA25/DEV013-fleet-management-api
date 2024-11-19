@@ -38,7 +38,7 @@ describe('GET /taxis', () => {
 
 describe('GET /taxis/id', () => {
   it("should respond with a status code 404 when taxi id isn't found", async () => {
-    const response = await request(app).get('/taxis/3');
+    const response = await request(app).get('/taxis/0');
     expect(response.status).toBe(404);
     expect(response.body.message).toBe('El id del taxi no se encontro')
   })

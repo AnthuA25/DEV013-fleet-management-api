@@ -67,11 +67,11 @@ describe('GET /location', () => {
 
 describe('GET /trajectories/:id', () => {
     it('should return 200 when an existing id is entered', async () => {
-        const id = 7707
+        const id = 3620267
         const response = await request(app).get(`/trajectories/${id}`);
         expect(response.status).toBe(200);
         expect(response.body.id).toBe(id);
-        expect(response.body.latitude).toBe(116.32259);
+        expect(response.body.latitude).toBe(116.35926);
     });
 
     it('should return 404 if the trajectories ID is not found',async() =>{
