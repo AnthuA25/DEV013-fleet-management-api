@@ -9,13 +9,13 @@ export const TaxisController = {
     getAllTaxis: async (req: Request, res: Response) => {
         try {
             const { skip, take }:IPaginated = req.query;
-            if (!skip || !take) {
-                return res.status(400).json({ message: "Los parámetros 'skip' y 'take' son obligatorios en la consulta." });
+            if (!skip || !take ||isNaN(skip) || isNaN(take) || Number(skip) < 0 || Number(take) < 0) {
+                return res.status(400).json({ message: "Los parámetros 'skip' y 'take' deben ser números enteros positivos." });
             }
             const taxis = await allTaxisService(Number(skip), Number(take))
             return res.status(200).json(taxis);
         } catch (error) {
-            return res.status(500).json({ message: error})
+            return res.status(500).json({ message: 'Error en el servidor' })
         }
     },
     getTaxiById: async (req: Request, res: Response) => {
@@ -25,9 +25,9 @@ export const TaxisController = {
             if (!getId){
                 return res.status(404).json({ message: 'El id del taxi no se encontro' });
             } 
-            else return res.status(200).json(getId);
+            return res.status(200).json(getId);
         } catch (error) {
-            return res.status(500).json({  message: error })
+            return res.status(500).json({ message: 'Error en el servidor' })
         }
     },
     postTaxi: async (req: Request, res: Response) => {
@@ -43,7 +43,7 @@ export const TaxisController = {
             const newTaxi = await createTaxiService(id,plate)
             return res.status(201).json(newTaxi);
         } catch (error) {
-            return res.status(500).json({ message: error})
+            return res.status(500).json({ message: 'Error en el servidor' })
         }
     },
     putTaxiById: async (req: Request, res: Response) => {
@@ -62,7 +62,7 @@ export const TaxisController = {
             return res.status(200).json(taxi);
 
         } catch (error) {
-            return res.status(500).json({  message: error })
+            return res.status(500).json({ message: 'Error en el servidor' })
         }
     },
     deleteByTaxi: async (req: Request, res: Response) => {
@@ -76,7 +76,7 @@ export const TaxisController = {
             const taxi = await deleteTaxiService(id)
             return res.status(200).json({ message: 'Se ha eliminado correctamente el Taxi', taxi: taxi });
         } catch (error) {
-            return res.status(500).json({  message: error })
+            return res.status(500).json({ message: 'Error en el servidor' })
         }
     },
 }
