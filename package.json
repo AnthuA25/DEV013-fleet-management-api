@@ -8,7 +8,7 @@
   },
   "scripts": {
     "start": "npx tsc && node ./build/index.js",
-    "dev": "npm tsc --watch && nodemon index.ts",
+    "dev": "nodemon index.ts",
     "build": "tsc && cp ./src/*.js ./build",
     "test": "jest --verbose --collect-coverage",
     "cli": "node scripts/cli.js",
@@ -50,6 +50,7 @@
   },
   "dependencies": {
     "@prisma/client": "^5.12.1",
+    "@types/nodemailer": "^6.4.15",
     "excel4node": "^1.8.2",
     "express": "^4.19.2",
     "inquirer": "^9.2.20",
